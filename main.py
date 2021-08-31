@@ -1,3 +1,7 @@
+#Equipe:
+# Arthur Savio
+# Guilherme Amaral
+# Joao Victor Ribeiro
 entrada = \
     [[1,1,1],
      [1,1,0],
