@@ -15,7 +15,7 @@ def pergunta():
     variavel = []
     variavel.append(float(input("Digite o valor de q1\n")))
     variavel.append(float(input("Digite o valor de q2\n")))
-    variavel.append(float(input("Digite o valor de q1\n")))
+    variavel.append(float(input("Digite o valor de q3\n")))
 
     for j in range(len(peso)):
         # print(Entrada[i])
