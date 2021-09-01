@@ -3,6 +3,7 @@
 # Guilherme Amaral
 # Joao Victor Ribeiro
 #Tabela 15
+
 entrada = \
     [[1,1,1],
      [1,1,0],
@@ -33,16 +34,17 @@ def pergunta():
 
     print("A resposta obtida foi " + str(saida))
 
-
 def treinamento():
-    loop = True
-    while loop == True:
+    cont = 0
+    while True:
+        loop = True
+        print ("EPOCA: "+ str(cont))
         for i in range(len(entrada)):
             soma = 0.0
             for j in range(len(peso)):
                 #print(Entrada[i])
                 soma += entrada[i][j] * peso[j]
-
+            print("SOMA: " + str(soma))
             #Funcao degrau
             if soma < 0:
                 saida = 0
@@ -51,12 +53,14 @@ def treinamento():
 
             erro = resposta_esperada[i] - saida
 
+            print("ERROR: " + str(erro))
             if erro != 0:
-                loop = loop and False
+                loop = False
                 for r in range(len(peso)):
                     peso[r] = peso[r] + 0.1 * (erro * entrada[i][r])
-            else:
-                loop = loop and True
+        cont += 1
+        if loop:
+            break;
 
 if __name__ == '__main__':
     treinamento()
