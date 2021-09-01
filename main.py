@@ -2,6 +2,7 @@
 # Arthur Savio
 # Guilherme Amaral
 # Joao Victor Ribeiro
+#Tabela 15
 entrada = \
     [[1,1,1],
      [1,1,0],
