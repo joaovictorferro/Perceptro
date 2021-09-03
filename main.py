@@ -1,46 +1,129 @@
 #Equipe:
-#Arthur Savio
-#Guilherme Amaral
-#João Victor Ribeiro
-#tabela: 15
+# Arthur Savio
+# Guilherme Amaral
+# Joao Victor Ribeiro
+#Tabela 15
 
-import pandas as pd
-from sklearn.neural_network import MLPClassifier
+entrada = \
+    [[1,1,1],
+     [1,1,0],
+     [1,0,1],
+     [1,0,0],
+     [0,1,1],
+     [0,1,0],
+     [0,0,1],
+     [0,0,0]]
+peso = [0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3]
+resposta_esperada=[0,1,1,1,1,1,0,1]
 
+def not_camada_5(matriz_resposta):
+    soma = 0.0
+    soma += matriz_resposta[0][3] * peso[8]
+    # print("SOMA: " + str(soma))
+    # Funcao degrau
+    if soma < 0:
+        saida = 0
+    else:
+        saida = 1
 
-table15 = [[1, 1, 1, 1],# 1 pra True e 0 pra false
-            [1, 1, 0, 1],
-            [1, 0, 1, 1],
-            [1, 0, 0, 1],
-            [0, 1, 1, 1],
-            [0, 1, 0, 1],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]]
+    return saida
 
-columns = ["p", "q", "r", "(p or r) or !q"]
-features = ["p", "q", "r"]
-result = ["(p or r) or !q"]
+def or_and_camada_4(matriz_resposta):
+    soma = 0.0
+    soma += matriz_resposta[0][2] * peso[6]
+    soma += matriz_resposta[2][0] * peso[7]
+    # print("SOMA: " + str(soma))
+    # Funcao degrau
+    if soma < 0:
+        saida = 0
+    else:
+        saida = 1
 
-df = pd.DataFrame(data = table15, columns = columns)
+    return saida
 
-X = df[features]
-y = df[result]
+def not_camada_3(matriz_resposta):
+    soma = 0.0
+    soma += matriz_resposta[0][1] * peso[5]
+    # print("SOMA: " + str(soma))
+    # Funcao degrau
+    if soma < 0:
+        saida = 0
+    else:
+        saida = 1
 
-clf = MLPClassifier(solver='sgd', activation = 'logistic', hidden_layer_sizes=(9, 9), learning_rate_init = 1,
-                    learning_rate = 'constant', random_state=1,max_iter=500)
+    return saida
 
-clf.fit(X, [1, 1, 1, 1, 1, 1, 0, 1])
+def or_and_camada_2(matriz_resposta):
+    soma = 0.0
+    soma += matriz_resposta[0][0] * peso[3]
+    soma += matriz_resposta[1][0] * peso[4]
+    # print("SOMA: " + str(soma))
+    # Funcao degrau
+    if soma < 0:
+        saida = 0
+    else:
+        saida = 1
 
+    return saida
 
-test = [[1, 1, 1],
-            [1, 1, 0],
-            [1, 0, 1],
-            [1, 0, 0],
-            [0, 1, 1],
-            [0, 1, 0],
-            [0, 0, 1],
-            [0, 0, 0]]
+def not_camada_1(i,j):
+    soma = 0.0
+    soma += entrada[i][j] * peso[j]
+    # print("SOMA: " + str(soma))
+    # Funcao degrau
+    if soma < 0:
+        saida = 0
+    else:
+        saida = 1
 
-clf.predict(test)
+    return saida
 
-print(clf.score(test,[1,1,1,1,1,1,0,1]))
+def treinamento():
+    epoca = 0
+    while True:
+        loop = True
+        print ("EPOCA: "+ str(epoca))
+        for i in range(len(entrada)):
+            matriz_resposta = [[0,0,0,0,0],
+                               [0],
+                               [0]]
+            #1 camada NOT
+            for j in range(3):
+                matriz_resposta[j][0] = not_camada_1(i,j)
+
+            #2 Camada OR/AND
+            matriz_resposta[0][1] = or_and_camada_2(matriz_resposta)
+
+            #3 Camada NOT
+            matriz_resposta[0][2] = not_camada_3(matriz_resposta)
+
+            #3 camada OR/AND
+            matriz_resposta[0][3] = or_and_camada_4(matriz_resposta)
+
+            #4 camada NOT
+            matriz_resposta[0][4] = not_camada_5(matriz_resposta)
+
+            # print(matriz_resposta)
+            erro = resposta_esperada[i] - matriz_resposta[0][4]
+
+            print("ERROR: " + str(erro))
+            if erro != 0:
+                loop = False
+                for r in range(3):
+                    peso[r] = peso[r] + 0.1 * erro * entrada[i][r]
+                peso[3] = peso[3] + 0.1 * erro * matriz_resposta[0][0]
+                peso[4] = peso[4] + 0.1 * erro * matriz_resposta[1][0]
+                peso[5] = peso[5] + 0.1 * erro * matriz_resposta[0][1]
+                peso[6] = peso[6] + 0.1 * erro * matriz_resposta[0][2]
+                peso[7] = peso[7] + 0.1 * erro * matriz_resposta[2][0]
+                peso[8] = peso[8] + 0.1 * erro * matriz_resposta[0][3]
+            print(matriz_resposta)
+            print(peso)
+        epoca += 1
+        # print(peso)
+        if loop:
+            break;
+
+if __name__ == '__main__':
+    treinamento()
+    # print(peso)
